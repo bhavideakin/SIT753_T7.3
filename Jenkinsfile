@@ -1,43 +1,44 @@
 pipeline {
-    agent any
+  agent any
 
-    tools {
-        nodejs 'NodeJS_20' // Make sure this matches the name in Jenkins Global Tool Configuration
+  tools {
+    nodejs "Node18" // Use the Node.js version installed in Jenkins (check Jenkins > Global Tool Configuration)
+  }
+
+  stages {
+    stage('Build') {
+      steps {
+        bat 'npm install'
+        bat 'echo Build successful'
+      }
     }
 
-    stages {
-        stage('Build') {
-            steps {
-                bat 'npm install'
-                bat 'echo Build successful'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                bat 'npm test || exit /b 0' // Ensures pipeline doesn't fail on test exit code
-            }
-        }
-
-        stage('Security Scan (npm audit)') {
-            steps {
-                bat 'npm audit || exit /b 0' // Ignores audit errors but shows results
-            }
-        }
+    stage('Test') {
+      steps {
+        bat 'npm test || exit /b 0' // Run tests, continue even if they fail
+      }
     }
 
-    post {
-        always {
-            echo 'Pipeline execution finished.'
-        }
-        success {
-            echo 'All stages completed successfully!'
-        }
-        failure {
-            echo 'One or more stages failed.'
-        }
+    stage('Security Scan (npm audit)') {
+      steps {
+        bat 'npm audit || exit /b 0' // Run audit, don’t fail build if vulnerabilities exist
+      }
     }
+  }
+
+  post {
+    always {
+      echo 'Pipeline execution finished.'
+    }
+    success {
+      echo 'All stages completed successfully!'
+    }
+    failure {
+      echo 'One or more stages failed.'
+    }
+  }
 }
+
 
 // pipeline {
 //   agent any
