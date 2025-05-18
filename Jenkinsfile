@@ -32,7 +32,7 @@ pipeline {
     stage('Code Quality (SonarCloud)') {
       steps {
         withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
-          bat 'C:\\sonar-scanner-cli-7.1.0.4889\\sonar-scanner-cli-7.1.0.4889\\bin\\sonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%'
+          bat 'C:\\sonar-scanner-cli-7.1.0.4889\\src\\main\\assembly\\binsonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%'
         }
       }
     }
