@@ -2,7 +2,12 @@ pipeline {
   agent any
 
   tools {
-    nodejs "Node18" // Use the Node.js version installed in Jenkins (check Jenkins > Global Tool Configuration)
+    nodejs "Node18" // Ensure this matches your Jenkins NodeJS tool name
+  }
+
+  environment {
+    SONAR_SCANNER_VERSION = "4.7.0.2747"
+    SONAR_SCANNER_DIR = "sonar-scanner-%SONAR_SCANNER_VERSION%-windows"
   }
 
   stages {
@@ -15,13 +20,25 @@ pipeline {
 
     stage('Test') {
       steps {
-        bat 'npm test || exit /b 0' // Run tests, continue even if they fail
+        bat 'npm test || exit /b 0'
       }
     }
 
     stage('Security Scan (npm audit)') {
       steps {
-        bat 'npm audit || exit /b 0' // Run audit, don’t fail build if vulnerabilities exist
+        bat 'npm audit || exit /b 0'
+      }
+    }
+
+    stage('Code Quality (SonarCloud)') {
+      steps {
+        withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+          bat '''
+            powershell -Command "Invoke-WebRequest -Uri https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-%SONAR_SCANNER_VERSION%-windows.zip -OutFile sonar-scanner.zip"
+            powershell -Command "Expand-Archive sonar-scanner.zip -DestinationPath sonar-scanner"
+            sonar-scanner\\sonar-scanner-%SONAR_SCANNER_VERSION%-windows\\bin\\sonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%
+          '''
+        }
       }
     }
   }
@@ -34,22 +51,16 @@ pipeline {
       echo 'All stages completed successfully!'
     }
     failure {
-      echo 'One or more stages failed.'
+      echo 'Pipeline failed.'
     }
   }
 }
-
 
 // pipeline {
 //   agent any
 
 //   tools {
-//     nodejs "Node18"
-//   }
-
-//   environment {
-//     SONAR_SCANNER_VERSION = "4.7.0.2747"
-//     SONAR_SCANNER_DIR = "sonar-scanner-%SONAR_SCANNER_VERSION%-windows"
+//     nodejs "Node18" // Use the Node.js version installed in Jenkins (check Jenkins > Global Tool Configuration)
 //   }
 
 //   stages {
@@ -62,28 +73,28 @@ pipeline {
 
 //     stage('Test') {
 //       steps {
-//         bat 'npm test || exit /b 0'
+//         bat 'npm test || exit /b 0' // Run tests, continue even if they fail
 //       }
 //     }
-
-//     stage('Code Quality (SonarCloud)') {
-//   steps {
-//     withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
-//       bat '''
-//         powershell -Command "Invoke-WebRequest -Uri https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-4.7.0.2747-windows.zip -OutFile sonar-scanner.zip"
-//         powershell -Command "Expand-Archive sonar-scanner.zip -DestinationPath sonar-scanner"
-//         sonar-scanner\\sonar-scanner-4.7.0.2747-windows\\bin\\sonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%
-//       '''
-//     }
-//   }
-// }
-
-
 
 //     stage('Security Scan (npm audit)') {
 //       steps {
-//         bat 'npm audit || exit /b 0'
+//         bat 'npm audit || exit /b 0' // Run audit, don’t fail build if vulnerabilities exist
 //       }
 //     }
 //   }
+
+//   post {
+//     always {
+//       echo 'Pipeline execution finished.'
+//     }
+//     success {
+//       echo 'All stages completed successfully!'
+//     }
+//     failure {
+//       echo 'One or more stages failed.'
+//     }
+//   }
 // }
+
+
