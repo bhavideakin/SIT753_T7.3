@@ -28,13 +28,14 @@ pipeline {
   steps {
     withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
       bat '''
-        curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-%SONAR_SCANNER_VERSION%-windows.zip
+        powershell -Command "Invoke-WebRequest -Uri https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-4.7.0.2747-windows.zip -OutFile sonar-scanner.zip"
         powershell -Command "Expand-Archive sonar-scanner.zip -DestinationPath sonar-scanner"
-        sonar-scanner\\bin\\sonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%
+        sonar-scanner\\sonar-scanner-4.7.0.2747-windows\\bin\\sonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%
       '''
     }
   }
 }
+
 
 
     stage('Security Scan (npm audit)') {
