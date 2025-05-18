@@ -1,2 +1,2 @@
-# SIT753_T7.3
-This repo is for my uni assignment
+# Node.js CI/CD Demo App
+A basic Express API for Jenkins CI/CD pipeline.
