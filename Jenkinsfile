@@ -25,16 +25,17 @@ pipeline {
     }
 
     stage('Code Quality (SonarCloud)') {
-      steps {
-        withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
-          bat '''
-            curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/%SONAR_SCANNER_DIR%.zip
-            tar -xf sonar-scanner.zip
-            %SONAR_SCANNER_DIR%\\bin\\sonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%
-          '''
-        }
-      }
+  steps {
+    withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+      bat '''
+        curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-%SONAR_SCANNER_VERSION%-windows.zip
+        powershell -Command "Expand-Archive sonar-scanner.zip -DestinationPath sonar-scanner"
+        sonar-scanner\\bin\\sonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%
+      '''
     }
+  }
+}
+
 
     stage('Security Scan (npm audit)') {
       steps {
