@@ -2,12 +2,11 @@ pipeline {
   agent any
 
   tools {
-    nodejs "Node18" // Ensure this matches your Jenkins NodeJS tool name
+    nodejs "Node18"
   }
 
   environment {
-    SONAR_SCANNER_VERSION = "4.7.0.2747"
-    SONAR_SCANNER_DIR = "sonar-scanner-%SONAR_SCANNER_VERSION%-windows"
+    SONAR_SCANNER_VERSION = "7.1.0.4889"
   }
 
   stages {
@@ -31,14 +30,13 @@ pipeline {
     }
 
     stage('Code Quality (SonarCloud)') {
-  steps {
-    withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
-      bat 'C:\\sonar-scanner-cli-7.1.0.4889\\sonar-scanner-cli-7.1.0.4889\\bin\\sonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%'
-
+      steps {
+        withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+          bat 'C:\\sonar-scanner-cli-7.1.0.4889\\sonar-scanner-cli-7.1.0.4889\\bin\\sonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%'
+        }
+      }
     }
   }
-}
-  
 
   post {
     always {
@@ -52,8 +50,7 @@ pipeline {
     }
   }
 }
-}
-  
+
 
 // pipeline {
 //   agent any
