@@ -31,17 +31,13 @@ pipeline {
     }
 
     stage('Code Quality (SonarCloud)') {
-      steps {
-        withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
-          bat '''
-            powershell -Command "Invoke-WebRequest -Uri https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-%SONAR_SCANNER_VERSION%-windows.zip -OutFile sonar-scanner.zip"
-            powershell -Command "Expand-Archive sonar-scanner.zip -DestinationPath sonar-scanner"
-            sonar-scanner\\sonar-scanner-%SONAR_SCANNER_VERSION%-windows\\bin\\sonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%
-          '''
-        }
-      }
+  steps {
+    withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+      bat 'C:\\sonar-scanner-cli-7.1.0.4889\src\main\assembly\binsonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%'
     }
   }
+}
+
 
   post {
     always {
