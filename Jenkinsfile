@@ -38,7 +38,7 @@ pipeline {
     }
   }
 }
-
+  
 
   post {
     always {
@@ -52,6 +52,8 @@ pipeline {
     }
   }
 }
+}
+  
 
 // pipeline {
 //   agent any
@@ -93,5 +95,3 @@ pipeline {
 //     }
 //   }
 // }
-
-
