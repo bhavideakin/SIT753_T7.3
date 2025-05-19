@@ -48,7 +48,7 @@ pipeline {
     }
   }
 }
-
+}
 
 // pipeline {
 //   agent any
