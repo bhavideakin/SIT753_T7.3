@@ -5,10 +5,6 @@ pipeline {
     nodejs "Node18"
   }
 
-  environment {
-    SONAR_SCANNER_VERSION = "7.1.0.4889"
-  }
-
   stages {
     stage('Build') {
       steps {
@@ -30,11 +26,11 @@ pipeline {
     }
 
     stage('Code Quality (ESLint)') {
-  steps {
-    bat 'npx eslint . || exit /b 0'
+      steps {
+        bat 'npx eslint . || exit /b 0'
+      }
+    }
   }
-}
-
 
   post {
     always {
@@ -47,7 +43,6 @@ pipeline {
       echo 'Pipeline failed.'
     }
   }
-}
 }
 
 // pipeline {
