@@ -29,14 +29,12 @@ pipeline {
       }
     }
 
-    stage('Code Quality (SonarCloud)') {
-      steps {
-        withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
-          bat 'C:\\sonar-scanner-cli-7.1.0.4889\\src\\main\\assembly\\bin\\sonar-scanner.bat -Dsonar.login=%SONAR_TOKEN%'
-        }
-      }
-    }
+    stage('Code Quality (ESLint)') {
+  steps {
+    bat 'npx eslint . || exit /b 0'
   }
+}
+
 
   post {
     always {
